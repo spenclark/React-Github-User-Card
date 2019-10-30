@@ -2,32 +2,64 @@ import React, { useEffect } from 'react';
 import axios from "axios"
 
 import './App.css';
-import UserList from './components/userList'
+import UserCard from './components/userCard'
 
 class App extends React.Component {
-  state = {
-    user: [],
-    followers: []
-  }
-  
-  componentDidMount() {
-    axios
-    .get('https://api.github.com/users/spenclark')
-    .then(res => {
-      this.setState({user: res.data})
-    }
-     )
-    .catch(res => console.log(res.data))
+  constructor() {
+    super();
+    this.state = {
+      userName: 'spenclark',
+      user: {},
+      followers: []
+    };
   }
 
+  changeUserName = (userName) => {
+    this.setState({ userName })
+  }
+
+  componentDidMount() {
+    this.usersGet();
+    this.usersFollowers();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log("CDU", this.state)
+    if(prevState.userName !== this.state.userName) {
+      console.log(prevState.userName)
+      this.usersGet();
+      this.usersFollowers();
+
+    }
+  }
+
+  usersGet = () => {
+    axios
+      .get(`https://api.github.com/users/${this.state.userName}`)
+      .then(res => {
+        console.log(res);
+        this.setState({ user: res.data });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  usersFollowers = () => {
+    axios
+    .get(`https://api.github.com/users/${this.state.userName}/followers`)
+    .then(res => {  console.log(res.data);
+      this.setState({ followers: res.data });
+    });
+  };
 
   render() {
     return (
-      <>
-      <UserList user={this.state.user}/>
-      </>
-    )
-    }
+      <div className='App'>
+        <UserCard user={this.state.user} followers={this.state.followers} />
+      </div>
+    );
+  }
 }
 
-export default App
+export default App; 
