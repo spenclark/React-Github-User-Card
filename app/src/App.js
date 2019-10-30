@@ -14,10 +14,6 @@ class App extends React.Component {
     };
   }
 
-  changeUserName = (userName) => {
-    this.setState({ userName })
-  }
-
   componentDidMount() {
     this.usersGet();
     this.usersFollowers();
@@ -26,7 +22,6 @@ class App extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     console.log("CDU", this.state)
     if(prevState.userName !== this.state.userName) {
-      console.log(prevState.userName)
       this.usersGet();
       this.usersFollowers();
 
